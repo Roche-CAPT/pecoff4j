@@ -14,7 +14,7 @@ import java.io.ByteArrayInputStream;
  */
 public class Demo {
     public static void main(String[] args) throws Exception {
-        PE pe = PEParser.parse(Demo.class.getResourceAsStream("/WinRun4J.exe"));
+        PE pe = PEParser.parse(Demo.class.getResourceAsStream("/WinRun4J.exe"), null);
 
         Demo demo = new Demo();
         demo.printAssemblyCode(pe);

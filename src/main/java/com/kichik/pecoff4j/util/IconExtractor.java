@@ -12,6 +12,7 @@ package com.kichik.pecoff4j.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import com.kichik.pecoff4j.PE;
 import com.kichik.pecoff4j.ResourceDirectory;
@@ -27,8 +28,8 @@ import com.kichik.pecoff4j.resources.IconDirectoryEntry;
 import com.kichik.pecoff4j.resources.IconImage;
 
 public class IconExtractor {
-	public static void extract(File pecoff, File outputDir) throws IOException {
-		PE pe = PEParser.parse(pecoff);
+	public static void extract(File pecoff, File outputDir, Consumer<Throwable> errorHandler) throws IOException {
+		PE pe = PEParser.parse(pecoff, errorHandler);
 		ResourceDirectory rd = pe.getImageData().getResourceTable();
 		if (rd == null)
 			return;

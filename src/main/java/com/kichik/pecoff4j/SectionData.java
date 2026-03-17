@@ -9,19 +9,20 @@
  *******************************************************************************/
 package com.kichik.pecoff4j;
 
+import java.io.IOException;
+import java.util.function.Consumer;
+
 import com.kichik.pecoff4j.constant.ImageDataDirectoryType;
 import com.kichik.pecoff4j.io.ByteArrayDataReader;
 import com.kichik.pecoff4j.io.DataEntry;
 import com.kichik.pecoff4j.io.IDataReader;
 import com.kichik.pecoff4j.io.IDataWriter;
 
-import java.io.IOException;
-
 public class SectionData {
 	private byte[] data;
 	private byte[] preamble;
 
-	public static SectionData read(PE pe, DataEntry entry, IDataReader dr)
+	public static SectionData read(PE pe, DataEntry entry, IDataReader dr, Consumer<Throwable> errorHandler)
 			throws IOException {
 		SectionTable st = pe.getSectionTable();
 		SectionHeader sh = st.getHeader(entry.index);
@@ -51,11 +52,13 @@ public class SectionData {
 				int dad = idd.getVirtualAddress();
 				if (dad >= vad && dad < vex) {
 					int off = dad - vad;
-					IDataReader idr = new ByteArrayDataReader(b, off,
-							idd.getSize());
-					DataEntry de = new DataEntry(i, 0);
-					de.baseAddress = sh.getVirtualAddress();
-					pe.getImageData().read(pe, de, idr);
+					if (idd.getSize() + off <= b.length) {
+						IDataReader idr = new ByteArrayDataReader(b, off,
+								idd.getSize());
+						DataEntry de = new DataEntry(i, 0);
+						de.baseAddress = sh.getVirtualAddress();
+						pe.getImageData().read(pe, de, idr, errorHandler);
+					}
 				}
 			}
 		}
