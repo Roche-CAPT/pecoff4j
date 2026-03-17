@@ -28,7 +28,7 @@ public class IconExtractorTest {
 		File output = new File(tempDir, "output");
 		output.mkdir();
 
-		IconExtractor.extract(exe, output);
+		IconExtractor.extract(exe, output, null);
 
 		byte[] expected = IO.toBytes(getClass().getResourceAsStream("/WinRun4J.ico"));
 		byte[] actual = IO.toBytes(new File(output, "WinRun4J.exe-icon0.ico"));

@@ -165,6 +165,6 @@ public class DataReader implements IDataReader {
 	private void safeRead(byte[] b) throws IOException {
 		int read = dis.read(b);
 		if (read != b.length)
-			throw new EOFException("Expected to read bytes from the stream");
+			throw new EOFException(String.format("Expected to read %1$d bytes from the stream, only read %2$d", b.length, read));
 	}
 }

@@ -9,6 +9,12 @@
  *******************************************************************************/
 package com.kichik.pecoff4j;
 
+import static com.kichik.pecoff4j.util.Alignment.align;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.function.Consumer;
+
 import com.kichik.pecoff4j.constant.ImageDataDirectoryType;
 import com.kichik.pecoff4j.constant.SectionFlag;
 import com.kichik.pecoff4j.io.DataEntry;
@@ -17,11 +23,6 @@ import com.kichik.pecoff4j.io.DataWriter;
 import com.kichik.pecoff4j.io.IDataReader;
 import com.kichik.pecoff4j.io.IDataWriter;
 import com.kichik.pecoff4j.util.PaddingType;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import static com.kichik.pecoff4j.util.Alignment.align;
 
 public class PE implements WritableStructure {
 	private DOSHeader dosHeader;
@@ -33,7 +34,7 @@ public class PE implements WritableStructure {
 	private SectionTable sectionTable;
 	private boolean is64bit;
 
-	public static PE read(IDataReader dr) throws IOException {
+	public static PE read(IDataReader dr, Consumer<Throwable> errorHandler) throws IOException {
 		PE pe = new PE();
 		pe.setDosHeader(DOSHeader.read(dr));
 
@@ -61,11 +62,11 @@ public class PE implements WritableStructure {
 		DataEntry entry = null;
 		while ((entry = pe.findNextEntry(dr.getPosition())) != null) {
 			if (entry.isSection) {
-				SectionData.read(pe, entry, dr);
+				SectionData.read(pe, entry, dr, errorHandler);
 			} else if (entry.isDebugRawData) {
 				readDebugRawData(pe, entry, dr);
 			} else {
-				pe.getImageData().read(pe, entry, dr);
+				pe.getImageData().read(pe, entry, dr, errorHandler);
 			}
 		}
 

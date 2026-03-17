@@ -9,6 +9,14 @@
  *******************************************************************************/
 package com.kichik.pecoff4j.io;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.function.Consumer;
+
 import com.kichik.pecoff4j.AttributeCertificateTable;
 import com.kichik.pecoff4j.COFFHeader;
 import com.kichik.pecoff4j.DOSHeader;
@@ -27,35 +35,28 @@ import com.kichik.pecoff4j.PESignature;
 import com.kichik.pecoff4j.SectionHeader;
 import com.kichik.pecoff4j.SectionTable;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 public class PEParser {
-	public static PE parse(InputStream is) throws IOException {
+	public static PE parse(InputStream is, Consumer<Throwable> errorHandler) throws IOException {
 		try (DataReader dr = new DataReader(is)) {
-			return read(dr);
+			return read(dr, errorHandler);
 		}
 	}
 
-	public static PE parse(String filename) throws IOException {
-		return parse(new File(filename));
+	public static PE parse(String filename, Consumer<Throwable> errorHandler) throws IOException {
+		return parse(new File(filename), errorHandler);
 	}
 
-	public static PE parse(File file) throws IOException {
+	public static PE parse(File file, Consumer<Throwable> errorHandler) throws IOException {
 		try (FileInputStream is = new FileInputStream(file);
 				DataReader dr = new DataReader(is)) {
-			return read(dr);
+			return read(dr, errorHandler);
 		}
 	}
 
-	public static PE parse(Path path) throws IOException {
+	public static PE parse(Path path, Consumer<Throwable> errorHandler) throws IOException {
 		try (InputStream is = Files.newInputStream(path);
 			 DataReader dr = new DataReader(is)) {
-			return read(dr);
+			return read(dr, errorHandler);
 		}
 	}
 
@@ -63,8 +64,8 @@ public class PEParser {
 	 * @deprecated use {@link PE#read(IDataReader)} instead
 	 */
 	@Deprecated
-	public static PE read(IDataReader dr) throws IOException {
-		return PE.read(dr);
+	public static PE read(IDataReader dr, Consumer<Throwable> errorHandler) throws IOException {
+		return PE.read(dr, errorHandler);
 	}
 
 	/**

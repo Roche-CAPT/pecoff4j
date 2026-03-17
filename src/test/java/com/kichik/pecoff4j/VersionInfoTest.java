@@ -135,7 +135,7 @@ public class VersionInfoTest {
 	}
 
 	private VersionInfo readVersionInfo() throws IOException {
-		PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"));
+		PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"), null);
 		ResourceDirectory rd = pe.getImageData().getResourceTable();
 
 		ResourceEntry[] entries = ResourceHelper.findResources(rd, ResourceType.VERSION_INFO);

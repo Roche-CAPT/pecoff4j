@@ -9,6 +9,9 @@
  *******************************************************************************/
 package com.kichik.pecoff4j;
 
+import java.io.IOException;
+import java.util.function.Consumer;
+
 import com.kichik.pecoff4j.constant.ImageDataDirectoryType;
 import com.kichik.pecoff4j.io.ByteArrayDataReader;
 import com.kichik.pecoff4j.io.DataEntry;
@@ -16,8 +19,6 @@ import com.kichik.pecoff4j.io.DataReader;
 import com.kichik.pecoff4j.io.IDataReader;
 import com.kichik.pecoff4j.io.IDataWriter;
 import com.kichik.pecoff4j.util.IntMap;
-
-import java.io.IOException;
 
 public class ImageData {
 	private byte[] headerPadding; // TODO find out what this is
@@ -50,69 +51,74 @@ public class ImageData {
 	// Any trailing data
 	private byte[] trailingData;
 
-	public void read(PE pe, DataEntry entry, IDataReader dr)
+	public void read(PE pe, DataEntry entry, IDataReader dr, Consumer<Throwable> errorHandler)
 			throws IOException {
 
-		// Read any preamble data
-		byte[] pa = dr.readNonZeroOrNull(entry.pointer);
-		if (pa != null)
-			put(entry.index, pa);
-
-		// Read the image data
-		ImageDataDirectory idd = pe.getOptionalHeader().getDataDirectory(
-				entry.index);
-		byte[] b = new byte[idd.getSize()];
-		dr.read(b);
-
-		switch (entry.index) {
-			case ImageDataDirectoryType.EXPORT_TABLE:
-				setExportTable(ExportDirectory.read(b));
-				break;
-			case ImageDataDirectoryType.IMPORT_TABLE:
-				setImportTable(ImportDirectory.read(b, entry.baseAddress));
-				break;
-			case ImageDataDirectoryType.RESOURCE_TABLE:
-				setResourceTable(ResourceDirectory.read(new ByteArrayDataReader(b), entry.baseAddress));
-				break;
-			case ImageDataDirectoryType.EXCEPTION_TABLE:
-				setExceptionTable(b);
-				break;
-			case ImageDataDirectoryType.CERTIFICATE_TABLE:
-				setCertificateTable(AttributeCertificateTable.read(b));
-				break;
-			case ImageDataDirectoryType.BASE_RELOCATION_TABLE:
-				setBaseRelocationTable(b);
-				break;
-			case ImageDataDirectoryType.DEBUG:
-				setDebug(DebugDirectory.read(b));
-				break;
-			case ImageDataDirectoryType.ARCHITECTURE:
-				setArchitecture(b);
-				break;
-			case ImageDataDirectoryType.GLOBAL_PTR:
-				setGlobalPtr(b);
-				break;
-			case ImageDataDirectoryType.TLS_TABLE:
-				setTlsTable(b);
-				break;
-			case ImageDataDirectoryType.LOAD_CONFIG_TABLE:
-				setLoadConfigTable(LoadConfigDirectory.read(pe, b));
-				break;
-			case ImageDataDirectoryType.BOUND_IMPORT:
-				setBoundImports(BoundImportDirectoryTable.read(new DataReader(b)));
-				break;
-			case ImageDataDirectoryType.IAT:
-				setIat(b);
-				break;
-			case ImageDataDirectoryType.DELAY_IMPORT_DESCRIPTOR:
-				setDelayImportDescriptor(b);
-				break;
-			case ImageDataDirectoryType.CLR_RUNTIME_HEADER:
-				setClrRuntimeHeader(CLRRuntimeHeader.read(b));
-				break;
-			case ImageDataDirectoryType.RESERVED:
-				setReserved(b);
-				break;
+		try {
+			// Read any preamble data
+			byte[] pa = dr.readNonZeroOrNull(entry.pointer);
+			if (pa != null)
+				put(entry.index, pa);
+	
+			// Read the image data
+			ImageDataDirectory idd = pe.getOptionalHeader().getDataDirectory(
+					entry.index);
+			byte[] b = new byte[idd.getSize()];
+			dr.read(b);
+	
+			switch (entry.index) {
+				case ImageDataDirectoryType.EXPORT_TABLE:
+					setExportTable(ExportDirectory.read(b));
+					break;
+				case ImageDataDirectoryType.IMPORT_TABLE:
+					setImportTable(ImportDirectory.read(b, entry.baseAddress));
+					break;
+				case ImageDataDirectoryType.RESOURCE_TABLE:
+					setResourceTable(ResourceDirectory.read(new ByteArrayDataReader(b), entry.baseAddress));
+					break;
+				case ImageDataDirectoryType.EXCEPTION_TABLE:
+					setExceptionTable(b);
+					break;
+				case ImageDataDirectoryType.CERTIFICATE_TABLE:
+					setCertificateTable(AttributeCertificateTable.read(b));
+					break;
+				case ImageDataDirectoryType.BASE_RELOCATION_TABLE:
+					setBaseRelocationTable(b);
+					break;
+				case ImageDataDirectoryType.DEBUG:
+					setDebug(DebugDirectory.read(b));
+					break;
+				case ImageDataDirectoryType.ARCHITECTURE:
+					setArchitecture(b);
+					break;
+				case ImageDataDirectoryType.GLOBAL_PTR:
+					setGlobalPtr(b);
+					break;
+				case ImageDataDirectoryType.TLS_TABLE:
+					setTlsTable(b);
+					break;
+				case ImageDataDirectoryType.LOAD_CONFIG_TABLE:
+					setLoadConfigTable(LoadConfigDirectory.read(pe, b));
+					break;
+				case ImageDataDirectoryType.BOUND_IMPORT:
+					setBoundImports(BoundImportDirectoryTable.read(new DataReader(b)));
+					break;
+				case ImageDataDirectoryType.IAT:
+					setIat(b);
+					break;
+				case ImageDataDirectoryType.DELAY_IMPORT_DESCRIPTOR:
+					setDelayImportDescriptor(b);
+					break;
+				case ImageDataDirectoryType.CLR_RUNTIME_HEADER:
+					setClrRuntimeHeader(CLRRuntimeHeader.read(b));
+					break;
+				case ImageDataDirectoryType.RESERVED:
+					setReserved(b);
+					break;
+			}
+		} catch (Throwable throwable) {
+			if (errorHandler != null) errorHandler.accept(throwable);
+			else throw throwable;
 		}
 	}
 

@@ -98,7 +98,7 @@ public class ResourceDirectoryTest {
 
 	@Test
 	public void testPERebuild() throws IOException {
-		PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"));
+		PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"), null);
 		pe.rebuild(PaddingType.PATTERN);
 		fixSizeOfInitializedData(pe);
 
@@ -116,7 +116,7 @@ public class ResourceDirectoryTest {
 	public void testAddResourcesToExe() throws IOException {
 		ResourceDirectory expectedDirectory = readResourceDirectory();
 
-		PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J-no-res.exe"));
+		PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J-no-res.exe"), null);
 		ResourceDirectory directory = pe.getImageData().getResourceTable();
 
 		// add icon from ico file
@@ -168,7 +168,7 @@ public class ResourceDirectoryTest {
 	}
 
 	private ResourceDirectory readResourceDirectory() throws IOException {
-		PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"));
+		PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"), null);
 		return pe.getImageData().getResourceTable();
 	}
 

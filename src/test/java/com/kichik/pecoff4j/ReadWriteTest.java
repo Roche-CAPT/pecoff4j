@@ -20,7 +20,7 @@ import java.io.InputStream;
 public class ReadWriteTest {
     @Test
     public void testReadWriteExe() throws IOException {
-        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"));
+        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"), null);
         ValidatingWriter writer = new ValidatingWriter(new DataReader(getClass().getResourceAsStream("/WinRun4J.exe")));
 
         pe.write(writer);
@@ -29,7 +29,7 @@ public class ReadWriteTest {
 
     @Test
     public void testReadWriteDll() throws IOException {
-        PE pe = PEParser.parse(getClass().getResourceAsStream("/clr/ClassLibrary.dll"));
+        PE pe = PEParser.parse(getClass().getResourceAsStream("/clr/ClassLibrary.dll"), null);
         ValidatingWriter writer = new ValidatingWriter(new DataReader(getClass().getResourceAsStream("/clr/ClassLibrary.dll")));
 
         pe.write(writer);
@@ -38,7 +38,7 @@ public class ReadWriteTest {
 
     @Test
     public void testReadWriteResources() throws IOException {
-        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"));
+        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"), null);
         ValidatingWriter writer = new ValidatingWriter(new DataReader(pe.getSectionTable().findSection(".rsrc").getData()));
 
         pe.getImageData().getResourceTable().write(writer);
@@ -48,7 +48,7 @@ public class ReadWriteTest {
 
     @Test
     public void testReadWriteVersionInfo() throws IOException {
-        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"));
+        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"), null);
 
         ResourceDirectory rd = pe.getImageData().getResourceTable();
         ResourceEntry[] entries = ResourceHelper.findResources(rd, ResourceType.VERSION_INFO);
@@ -62,7 +62,7 @@ public class ReadWriteTest {
 
     @Test
     public void testReadWriteManifest() throws IOException {
-        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"));
+        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"), null);
 
         ResourceDirectory rd = pe.getImageData().getResourceTable();
         ResourceEntry[] entries = ResourceHelper.findResources(rd, ResourceType.MANIFEST);
@@ -76,7 +76,7 @@ public class ReadWriteTest {
 
     @Test
     public void testReadWriteIconGroups() throws IOException {
-        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"));
+        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"), null);
 
         ResourceDirectory rd = pe.getImageData().getResourceTable();
         ResourceEntry[] entries = ResourceHelper.findResources(rd, ResourceType.GROUP_ICON);
@@ -90,7 +90,7 @@ public class ReadWriteTest {
 
     @Test
     public void testReadWriteIcons() throws IOException {
-        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"));
+        PE pe = PEParser.parse(getClass().getResourceAsStream("/WinRun4J.exe"), null);
 
         ResourceDirectory rd = pe.getImageData().getResourceTable();
         ResourceEntry[] entries = ResourceHelper.findResources(rd, ResourceType.ICON);
@@ -113,7 +113,7 @@ public class ReadWriteTest {
 
         for (File file : files) {
             System.out.println("Checking " + file);
-            PE pe = PEParser.parse(file);
+            PE pe = PEParser.parse(file, null);
             try (InputStream expected = new FileInputStream(file)) {
                 ValidatingWriter writer = new ValidatingWriter(new DataReader(expected));
 

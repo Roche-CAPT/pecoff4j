@@ -25,7 +25,7 @@ public class PEParserTest {
         }
          */
         InputStream in = this.getClass().getResourceAsStream("/clr/ClassLibrary.dll");
-        PE pe = PEParser.parse(in);
+        PE pe = PEParser.parse(in, null);
         CLRRuntimeHeader clrRuntimeHeader = pe.getImageData().getClrRuntimeHeader();
 
         // test that we read the full 72 bytes in the header
