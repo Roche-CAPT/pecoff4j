@@ -4,7 +4,7 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.kichik.pecoff4j</groupId>
+    <groupId>com.github.roche-capt.pecoff4j</groupId>
     <artifactId>pecoff4j</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -32,21 +32,23 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git://github.com/kichik/pecoff4j.git</connection>
-        <developerConnection>scm:git:ssh://github.com:kichik/pecoff4j.git</developerConnection>
-        <url>https://github.com/kichik/pecoff4j</url>
+        <connection>scm:git:git://github.com/Roche-CAPT/pecoff4j.git</connection>
+        <developerConnection>scm:git:ssh://github.com/Roche-CAPT/pecoff4j.git</developerConnection>
+        <url>https://github.com/Roche-CAPT/pecoff4j</url>
     </scm>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-    </distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/Roche-CAPT/pecoff4j</url>
+		</repository>
+		<snapshotRepository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/Roche-CAPT/pecoff4j</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 
     <profiles>
@@ -161,28 +163,6 @@
                             </archive>
                         </configuration>
                     </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <configuration>
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.7</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -193,6 +173,11 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.4</version>
             </plugin>
         </plugins>
     </build>
